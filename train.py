@@ -28,4 +28,4 @@ model.fit(train_X, train_Y,
 # Save trained model
 model.save('model.h5')
 score = model.evaluate(train_X, train_Y, batch_size=128)
-print 'Train scores: loss => %s, acc =>%s.' % score
+print 'Train scores: loss => %s, acc =>%s.' % (score[0], score[1])
