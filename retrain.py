@@ -1,9 +1,8 @@
 import keras
 import sys
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
+from datetime import datetime
 
 # Load testing data
 train_df = pd.read_csv('test.csv' if sys.argv < 2 else sys.argv[1])
@@ -16,5 +15,5 @@ model.fit(train_X, train_Y,
           epochs=20,
           batch_size=128)
 # Save trained model
-model.save('model.h5')
+model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
 print 'DONE'

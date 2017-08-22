@@ -1,9 +1,8 @@
-import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
+from datetime import datetime
 
 
 # Load training data
@@ -26,6 +25,6 @@ model.fit(train_X, train_Y,
           epochs=20,
           batch_size=128)
 # Save trained model
-model.save('model.h5')
+model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
 score = model.evaluate(train_X, train_Y, batch_size=128)
 print 'Train scores: loss => %s, acc =>%s.' % (score[0], score[1])
