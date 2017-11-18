@@ -1,2 +1,2 @@
-# MedicalSignalClassifier
-Train a classifier by keras to predict patient status base on medical signals
+# medical-signal-keras
+Predict patient's current status using keras sequential model
