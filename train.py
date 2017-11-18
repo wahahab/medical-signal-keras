@@ -7,8 +7,6 @@ from keras.layers import Dense, Dropout
 from keras.utils import np_utils
 from common import precision, recall
 from sklearn.preprocessing import LabelEncoder
-# from datetime import datetime
-# from keras.utils.np_utils import to_categorical
 
 
 def train_and_save(X, Y, model_name):
@@ -20,6 +18,8 @@ def train_and_save(X, Y, model_name):
     model.add(Dense(Y.shape[1], activation='softmax'))
     loss = 'binary_crossentropy' if Y.shape[1] == 2 else 'categorical_crossentropy'
     optimizer = 'rmsprop' if Y.shape[1] == 2 else 'adam'
+    print precision
+    print recall
     model.compile(loss=loss, optimizer=optimizer,
                   metrics=['accuracy', precision, recall])
     model.fit(X, Y,

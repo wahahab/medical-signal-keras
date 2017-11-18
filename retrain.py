@@ -1,15 +1,18 @@
 import keras
-import sys
 import pandas as pd
 
 from datetime import datetime
 
+COLUMNS = ['WABPm', 'WICPm']  # 使用的欄位名稱
+FILE_NAME = 'test.csv'  # 要餵進去的資料
+MODEL_PATH = 'models/binary-WICPm-WABPm-WHR.h5'  # 需要加強訓練的model路徑
+
 # Load testing data
-train_df = pd.read_csv('test.csv' if sys.argv < 2 else sys.argv[1])
-train_X = train_df.loc[:, ['WABPm', 'WICPm']].as_matrix()
+train_df = pd.read_csv(FILE_NAME)
+train_X = train_df.loc[:, COLUMNS].as_matrix()
 train_Y = train_df.loc[:, 'ICP_condition'].as_matrix()
 # Load trained model
-model = keras.models.load_model('model.h5')
+model = keras.models.load_model(MODEL_PATH)
 # Retrain this model
 model.fit(train_X, train_Y,
           epochs=20,
