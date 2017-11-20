@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import keras
 import pandas as pd
+import numpy as np
 import keras.backend as K
 
 from datetime import datetime
 from common import precision, recall
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import precision_recall_fscore_support
 from keras.utils import np_utils
 
 
@@ -38,4 +40,7 @@ model.fit(train_X, dummy_y,
           batch_size=128)
 # Save trained model
 model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
+score2 = precision_recall_fscore_support(np.argmax(model.predict(train_X), axis=1), np.argmax(dummy_y, axis=1), average='macro')
+print
+print 'Precision: %s, Recall: %s, Fscore: %s' % score2[:3]
 print 'DONE'
