@@ -1,12 +1,15 @@
 import sys
 
 import pandas as pd
+import numpy as np
 
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.utils import np_utils
-from common import precision, recall
+# from common import precision, recall
+# from common import mcor, recall, f1
 from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import precision_recall_fscore_support
 
 
 def train_and_save(X, Y, model_name):
@@ -18,10 +21,8 @@ def train_and_save(X, Y, model_name):
     model.add(Dense(Y.shape[1], activation='softmax'))
     loss = 'binary_crossentropy' if Y.shape[1] == 2 else 'categorical_crossentropy'
     optimizer = 'rmsprop' if Y.shape[1] == 2 else 'adam'
-    print precision
-    print recall
     model.compile(loss=loss, optimizer=optimizer,
-                  metrics=['accuracy', precision, recall])
+                  metrics=['accuracy'])
     model.fit(X, Y,
               epochs=5,
               batch_size=128)
@@ -29,8 +30,10 @@ def train_and_save(X, Y, model_name):
     # model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
     model.save('models/%s.h5' % (model_name))
     score = model.evaluate(X, Y, batch_size=128)
+    score2 = precision_recall_fscore_support(np.argmax(model.predict(X), axis=1), np.argmax(Y, axis=1), average='macro')
     print
-    print '%s model training scores: %s' % (model_name, score)
+    print 'Accuracy: %s' % (score[1])
+    print 'Precision: %s, Recall: %s, Fscore: %s' % score2[:3]
     return model
 
 # # perform testing
