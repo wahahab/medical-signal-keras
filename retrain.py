@@ -17,11 +17,13 @@ def mean_pred(y_true, y_pred):
 COLUMNS = ['WABPm', 'WICPm', 'WHR']  # 使用的欄位名稱
 FILE_NAME = 'test.csv'  # 要餵進去的資料
 MODEL_PATH = 'models/binary-WICPm-WABPm-WHR.h5'  # 需要加強訓練的model路徑
+BINARY = True
 
 # Load testing data
 train_df = pd.read_csv(FILE_NAME)
 train_X = train_df.loc[:, COLUMNS].as_matrix()
-train_Y = train_df.loc[:, 'ICP_condition'].as_matrix()
+train_Y = train_df.loc[:, 'Condition'].as_matrix()
+train_Y = train_Y <= 3 if BINARY else train_Y
 # encode class values as integers
 encoder = LabelEncoder()
 encoder.fit(train_Y)

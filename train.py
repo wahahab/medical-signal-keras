@@ -12,6 +12,16 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import precision_recall_fscore_support
 
 
+def cal_metrics(true_val, predict_val):
+    t = true_val.sum()
+    f = len(true_val) - t
+    tp = ((true_val == 1) & (predict_val == 1)).sum() / float(t)
+    fn = ((true_val == 1) & (predict_val != 1)).sum() / float(t)
+    fp = ((true_val != 1) & (predict_val == 1)).sum() / float(f)
+    tn = ((true_val != 1) & (predict_val != 1)).sum() / float(f)
+    return tp, fn, fp, tn
+
+
 def train_and_save(X, Y, model_name):
     model = Sequential()
     model.add(Dense(64, input_dim=X.shape[1], activation='relu'))
@@ -24,16 +34,20 @@ def train_and_save(X, Y, model_name):
     model.compile(loss=loss, optimizer=optimizer,
                   metrics=['accuracy'])
     model.fit(X, Y,
-              epochs=5,
+              epochs=1,
               batch_size=128)
     # Save trained model
     # model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
     model.save('models/%s.h5' % (model_name))
     score = model.evaluate(X, Y, batch_size=128)
-    score2 = precision_recall_fscore_support(np.argmax(model.predict(X), axis=1), np.argmax(Y, axis=1), average='macro')
+    predict_val = np.argmax(model.predict(X), axis=1)
+    true_val = np.argmax(Y, axis=1)
+    score2 = precision_recall_fscore_support(true_val, predict_val, average='macro')
+    score3 = cal_metrics(true_val, predict_val)
     print
     print 'Accuracy: %s' % (score[1])
     print 'Precision: %s, Recall: %s, Fscore: %s' % score2[:3]
+    print 'tp: %s, fn: %s, fp: %s, tn: %s' % score3
     return model
 
 # # perform testing
