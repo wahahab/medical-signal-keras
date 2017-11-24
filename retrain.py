@@ -23,10 +23,11 @@ BINARY = True
 train_df = pd.read_csv(FILE_NAME)
 train_X = train_df.loc[:, COLUMNS].as_matrix()
 train_Y = train_df.loc[:, 'Condition'].as_matrix()
-train_Y = train_Y <= 3 if BINARY else train_Y
+train_Y = (train_Y <= 3).astype(int) if BINARY else train_Y
+labels = [1, 0] if BINARY else range(1, 8)
 # encode class values as integers
 encoder = LabelEncoder()
-encoder.fit(train_Y)
+encoder.fit(labels)
 encoded_Y = encoder.transform(train_Y)
 # convert integers to dummy variables (i.e. one hot encoded)
 dummy_y = np_utils.to_categorical(encoded_Y)

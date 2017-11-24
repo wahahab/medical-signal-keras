@@ -34,7 +34,7 @@ def train_and_save(X, Y, model_name):
     model.compile(loss=loss, optimizer=optimizer,
                   metrics=['accuracy'])
     model.fit(X, Y,
-              epochs=1,
+              epochs=5,
               batch_size=128)
     # Save trained model
     # model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
@@ -93,10 +93,11 @@ def start_train(features, isBinary):
     train_df = train_df.loc[train_df.Condition < 7, :]
     train_X = train_df.loc[:, features].as_matrix()
     train_Y = train_df.loc[:, 'Condition'].as_matrix()
-    train_Y = train_Y <= 3 if isBinary else train_Y
+    train_Y = (train_Y <= 3).astype(int) if isBinary else train_Y
+    labels = [1, 0] if isBinary else range(1, 8)
     # encode class values as integers
     encoder = LabelEncoder()
-    encoder.fit(train_Y)
+    encoder.fit(labels)
     encoded_Y = encoder.transform(train_Y)
     # convert integers to dummy variables (i.e. one hot encoded)
     dummy_y = np_utils.to_categorical(encoded_Y)
