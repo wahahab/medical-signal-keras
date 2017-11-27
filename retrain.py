@@ -30,7 +30,7 @@ encoder = LabelEncoder()
 encoder.fit(labels)
 encoded_Y = encoder.transform(train_Y)
 # convert integers to dummy variables (i.e. one hot encoded)
-dummy_y = np_utils.to_categorical(encoded_Y)
+dummy_y = np_utils.to_categorical(encoded_Y, len(labels))
 # Load trained model
 model = keras.models.load_model(MODEL_PATH, custom_objects={
                                 'recall': recall,
