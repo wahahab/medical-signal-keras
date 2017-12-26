@@ -102,3 +102,4 @@ ENV/
 images/areaMaps
 
 models/*
+train_history.json

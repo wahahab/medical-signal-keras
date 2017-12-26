@@ -1,4 +1,5 @@
 import sys
+import json
 
 import pandas as pd
 import numpy as np
@@ -9,7 +10,7 @@ from keras.utils import np_utils
 # from common import precision, recall
 # from common import mcor, recall, f1
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import precision_recall_fscore_support
+from sklearn.metrics import precision_recall_fscore_support, confusion_matrix
 
 
 def cal_metrics(true_val, predict_val):
@@ -33,9 +34,12 @@ def train_and_save(X, Y, model_name):
     optimizer = 'rmsprop' if Y.shape[1] == 2 else 'adam'
     model.compile(loss=loss, optimizer=optimizer,
                   metrics=['accuracy'])
-    model.fit(X, Y,
-              epochs=5,
-              batch_size=128)
+    history = model.fit(X, Y,
+                        epochs=30,
+                        batch_size=128)
+    with open('train_history.json', 'w') as f:
+        print 'Writing training history...'
+        f.write(json.dumps(history.history))
     # Save trained model
     # model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
     model.save('models/%s.h5' % (model_name))
@@ -43,11 +47,12 @@ def train_and_save(X, Y, model_name):
     predict_val = np.argmax(model.predict(X), axis=1)
     true_val = np.argmax(Y, axis=1)
     score2 = precision_recall_fscore_support(true_val, predict_val, average='macro')
-    score3 = cal_metrics(true_val, predict_val)
+    # score3 = cal_metrics(true_val, predict_val)
     print
     print 'Accuracy: %s' % (score[1])
     print 'Precision: %s, Recall: %s, Fscore: %s' % score2[:3]
-    print 'tp: %s, fn: %s, fp: %s, tn: %s' % score3
+    # print 'tp: %s, fn: %s, fp: %s, tn: %s' % score3
+    print confusion_matrix(true_val, predict_val)
     return model
 
 # # perform testing
