@@ -1,5 +1,6 @@
 import sys
 import json
+import csv
 
 import pandas as pd
 import numpy as np
@@ -35,11 +36,17 @@ def train_and_save(X, Y, model_name):
     model.compile(loss=loss, optimizer=optimizer,
                   metrics=['accuracy'])
     history = model.fit(X, Y,
-                        epochs=30,
+                        epochs=3,
                         batch_size=128)
-    with open('train_history.json', 'w') as f:
+    with open('train_history.csv', 'w') as f:
+        writer = csv.DictWriter(f, fieldnames=history.history.keys())
+        writer.writeheader()
+        for i in range(len(history.history['acc'])):
+            writer.writerow({
+                            'acc': history.history['acc'][i],
+                            'loss': history.history['loss'][i],
+                            })
         print 'Writing training history...'
-        f.write(json.dumps(history.history))
     # Save trained model
     # model.save('models/model-%s.h5' % datetime.isoformat(datetime.now()))
     model.save('models/%s.h5' % (model_name))
