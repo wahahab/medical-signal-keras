@@ -9,6 +9,10 @@ from sklearn.model_selection import KFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
+IS_DEV = True
+NB_EPOCH = 1 if IS_DEV else 100
+BATCH_SIZE = 1024 if IS_DEV else 5
+
 # load dataset
 dataframe = pandas.read_csv("train.csv")
 # split into input (X) and output (Y) variables
@@ -30,8 +34,14 @@ def baseline_model():
 seed = 7
 numpy.random.seed(seed)
 # evaluate model with standardized dataset
-estimator = KerasRegressor(build_fn=baseline_model, nb_epoch=100, batch_size=5, verbose=1)
+estimator = KerasRegressor(build_fn=baseline_model, nb_epoch=NB_EPOCH,
+                           batch_size=BATCH_SIZE, verbose=1)
 
+# start training
+print 'start training...'
+estimator.fit(X, Y)
+
+print 'start predicting...'
 # load test dataset
 dataframe = pandas.read_csv('test.csv')
 X = dataframe.loc[:, ['WABPm', 'HR']].values
@@ -39,12 +49,12 @@ X = dataframe.loc[:, ['WABPm', 'HR']].values
 Y = estimator.predict(X)
 
 # write predict result
-with open('icp_predict_result.txt', 'w') as f:
-    f.write(json.dumps(Y))
+print 'writing predict result...'
+numpy.savetxt('predict_icp_result.txt', Y)
 
 # save model
-estimator.model.save('icp_estimator.h5')
+# estimator.model.save('icp_estimator.h5')
 
-kfold = KFold(n_splits=10, random_state=seed)
-results = cross_val_score(estimator, X, Y, cv=kfold)
-print("Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
+# kfold = KFold(n_splits=10, random_state=seed)
+# results = cross_val_score(estimator, X, Y, cv=kfold)
+# print("Results: %.2f (%.2f) MSE" % (results.mean(), results.std()))
