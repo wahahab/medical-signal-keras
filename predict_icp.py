@@ -53,6 +53,9 @@ print 'writing predict result...'
 numpy.savetxt('predict_icp_result.txt', Y)
 
 # save model
+estimator.model.save('./predict_icp_model.h5')
+
+# save model
 # estimator.model.save('icp_estimator.h5')
 
 # kfold = KFold(n_splits=10, random_state=seed)
